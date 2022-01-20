@@ -15,6 +15,13 @@ class SendNotificationsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 600;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -31,7 +38,7 @@ class SendNotificationsJob implements ShouldQueue
      */
     public function handle()
     {
-        User::all()->each(
+        User::cursor()->each(
             fn (User $user) => $user->notify(
                 new \App\Notifications\MaintenanceNotice()
             )
