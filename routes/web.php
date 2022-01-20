@@ -20,4 +20,4 @@ Route::get('/', function () {
 
 Route::get('/notify-all-users', function () {
     SendNotificationsJob::dispatch()->delay(now()->addSeconds(30));
-});
+})->name('notify-all-users');
