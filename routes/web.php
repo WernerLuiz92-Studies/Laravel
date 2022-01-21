@@ -1,6 +1,11 @@
 <?php
 
+use App\Jobs\MakeOrder;
+use App\Jobs\RunPayment;
+use App\Jobs\ValidateCard;
 use App\Jobs\SendNotificationsJob;
+use Illuminate\Bus\BatchRepository;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +19,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function (BatchRepository $batchRepository) {
+    return view('welcome', [
+        'batches' => $batchRepository->get(),
+    ]);
+})->name('home');
 
 Route::get('/notify-all-users', function () {
     SendNotificationsJob::dispatch();
+
+    return redirect()->route('home');
 })->name('notify-all-users');
+
+Route::get('/make-payment', function () {
+    Bus::batch([
+        new MakeOrder(),
+        new ValidateCard(),
+        new RunPayment(),
+    ])
+    ->name('make-payment'. rand(1, 10))
+    ->dispatch();
+
+    return redirect()->route('home');
+})->name('run-payment-batch');

@@ -112,11 +112,29 @@
                                 Notificar todos os Usuários
                             </a>
                         </div>
+                        <div class="flex items-center">
+                            <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" class="-mt-px w-5 h-5 text-gray-400">
+                                <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+
+                            <a href="{{ route("run-payment-batch") }}" class="ml-1 underline">
+                                Fazer um pagamento
+                            </a>
+                        </div>
                     </div>
 
                     <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
                         Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                     </div>
+                </div>
+
+                <div class="bg-white shadow overflow-hidden sm:rounded-md">
+
+                    <ul role="list" class="divide-y divide-gray-200">
+                        @foreach ($batches as $batch)
+                            <x-batch :batch="$batch" />
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>
