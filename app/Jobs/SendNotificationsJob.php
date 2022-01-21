@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -38,8 +39,19 @@ class SendNotificationsJob implements ShouldQueue
      */
     public function handle()
     {
-        User::cursor()->each(
-            fn (User $user) => SendNotificationJob::dispatch($user)
-        );
+        $jobs = [];
+
+        User::cursor()->chunk(1000)
+            ->each(function ($chunk) use (&$jobs) {
+                $chunk->each(
+                    function ($user) use (&$jobs) {
+                        $jobs[] = new SendNotificationJob($user);
+                    }
+                );
+            });
+
+        Bus::batch($jobs)
+        ->name('notifying-all-users')
+        ->dispatch();
     }
 }
