@@ -39,9 +39,7 @@ class SendNotificationsJob implements ShouldQueue
     public function handle()
     {
         User::cursor()->each(
-            fn (User $user) => $user->notify(
-                new \App\Notifications\MaintenanceNotice()
-            )
+            fn (User $user) => SendNotificationJob::dispatch($user)
         );
     }
 }

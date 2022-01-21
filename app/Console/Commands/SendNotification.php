@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use App\Jobs\SendNotificationsJob;
 
 class SendNotification extends Command
 {
@@ -38,11 +39,6 @@ class SendNotification extends Command
      */
     public function handle()
     {
-        $this->withProgressBar(
-            User::all(),
-            fn (User $user) => $user->notify(
-                new \App\Notifications\MaintenanceNotice()
-            )
-        );
+        SendNotificationsJob::dispatch();
     }
 }
